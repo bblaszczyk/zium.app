@@ -15,6 +15,7 @@ export class MediaStatsOverlay extends Container<MediaStatsOverlayConfig> {
   private videoStreamInfo?: VideoStreamInfo;
   private numberOfDroppedFrames = 0;
   private prevDroppedVideoFramesSum = 0;
+  private intervalId = 0;
 
   constructor(config: MediaStatsOverlayConfig = {}, videoStreamInfo: VideoStreamInfo) {
     super(config);
@@ -55,7 +56,7 @@ export class MediaStatsOverlay extends Container<MediaStatsOverlayConfig> {
       const mediaStatsData = {};
       this.updateMediaStats(mediaStatsData);
 
-      setInterval(() => {
+      this.intervalId = setInterval(() => {
         const droppedVideoFramesSum = player.getDroppedVideoFrames();
         if (droppedVideoFramesSum > this.prevDroppedVideoFramesSum) {
           this.numberOfDroppedFrames = droppedVideoFramesSum - this.prevDroppedVideoFramesSum;
@@ -86,6 +87,10 @@ export class MediaStatsOverlay extends Container<MediaStatsOverlayConfig> {
           fps: player.getVideoQuality().frameRate,
         });
       }, 1000);
+    });
+
+    player.on(player.exports.PlayerEvent.Destroy, () => {
+      clearInterval(this.intervalId);
     });
   }
 }
