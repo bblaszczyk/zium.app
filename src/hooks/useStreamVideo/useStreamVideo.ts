@@ -31,6 +31,7 @@ export const useStreamVideo = (playbackUrl: string | null) => {
           data: {
             streamType: "HLS",
             videoUrl: "https://cph-msl.akamaized.net/hls/live/2000341/test/master.m3u8",
+            channelId: 10000,
           },
         });
         return;
