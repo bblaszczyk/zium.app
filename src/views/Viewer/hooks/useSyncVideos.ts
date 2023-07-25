@@ -85,15 +85,21 @@ export const useSyncVideos = ({ windows, windowVideojsRefMapRef, isLive, playbac
       if (mainWindowPlayer == null) {
         return;
       }
+      let mainWindowsPlayerDestroyed = false;
 
       const forceSync = () => syncVideos(true);
       mainWindowPlayer.on(PlayerEvent.Seek, forceSync);
       mainWindowPlayer.on(PlayerEvent.TimeShift, forceSync);
+      mainWindowPlayer.on(PlayerEvent.Destroy, () => {
+        mainWindowsPlayerDestroyed = true;
+      });
       offsetEmitter.addEventListener("change", forceSync);
 
       cleanupFunction = () => {
-        mainWindowPlayer.off(PlayerEvent.Seek, forceSync);
-        mainWindowPlayer.off(PlayerEvent.TimeShift, forceSync);
+        if (!mainWindowsPlayerDestroyed) {
+          mainWindowPlayer.off(PlayerEvent.Seek, forceSync);
+          mainWindowPlayer.off(PlayerEvent.TimeShift, forceSync);
+        }
         offsetEmitter.removeEventListener("change", forceSync);
       };
     };
