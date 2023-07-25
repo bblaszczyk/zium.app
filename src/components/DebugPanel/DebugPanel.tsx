@@ -218,6 +218,11 @@ const DebugRaceSettings = ({ closePanel }: DebugPanelContentsProps) => {
         checked={flags.forceTVAccess}
         onChange={updateFlag("forceTVAccess")}
       />
+      <Checkbox
+        label="Enable media debug overlay"
+        checked={flags.showMediaDebugOverlay}
+        onChange={updateFlag("showMediaDebugOverlay")}
+      />
     </div>
   );
 };
