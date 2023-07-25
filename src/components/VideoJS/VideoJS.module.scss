@@ -80,5 +80,20 @@
       transform: translate(-50%, -50%);
       width: 128px;
     }
+    
+    .bmpui-ui-media-stats-overlay {
+      background: var(--color-core-neutral-darken-400);
+      height: 50%;
+      right: 0;
+      margin: 0;
+      opacity: 1;
+      position: absolute;
+      top: 0;
+      transition: var(--transition-medium);
+      transition-property: opacity, visibility;
+      visibility: visible;
+      width: 50%;
+      white-space: pre-line;
+    }
   }
 }

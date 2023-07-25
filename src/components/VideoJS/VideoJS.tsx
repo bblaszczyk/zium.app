@@ -11,6 +11,7 @@ import { useAnalytics } from "../../hooks/useAnalytics/useAnalytics";
 import { toggleFullScreen } from "../../utils/toggleFullScreen";
 import styles from "./VideoJS.module.scss";
 import { BufferingOverlay } from "./BufferingOverlay";
+import { MediaStatsOverlay } from "./MediaStatsOverlay";
 
 export interface VideoJSOptions extends PlayerConfig {
   ui?: UIConfig | false;
@@ -28,6 +29,7 @@ interface VideoJSProps {
   isMuted?: boolean;
   volume?: number;
   fillMode?: GridLayoutFillMode;
+  showMediaStatsOverlay?: boolean;
 }
 
 export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
@@ -41,6 +43,7 @@ export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
       isMuted = false,
       areClosedCaptionsOn = false,
       fillMode = "fill",
+      showMediaStatsOverlay = false,
     },
     ref,
   ) => {
@@ -72,6 +75,7 @@ export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
         };
         const options = objectMerge(baseOptions, overwrittenOptions) as VideoJSOptions;
         const player = new Player(placeholderEl, options);
+        const mediaStatsOverlay = new MediaStatsOverlay({}, videoStreamInfo);
 
         if (options.ui !== false) {
           uiManagerRef.current = UIFactory.buildDefaultUI(player, options.ui);
@@ -80,6 +84,7 @@ export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
             components: [new BufferingOverlay({ showDelayMs: 10 }), new SubtitleOverlay()],
             hideDelay: -1,
           });
+          if (showMediaStatsOverlay) myUi.addComponent(mediaStatsOverlay);
 
           uiManagerRef.current = new UIManager(player, myUi);
         } else {
@@ -87,7 +92,7 @@ export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
             components: [new SubtitleOverlay()],
             hideDelay: -1,
           });
-
+          if (showMediaStatsOverlay) myUi.addComponent(mediaStatsOverlay);
           uiManagerRef.current = new UIManager(player, myUi);
         }
 
@@ -125,7 +130,7 @@ export const VideoJS = forwardRef<PlayerAPI | null, VideoJSProps>(
       };
 
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [overwrittenOptions, videoStreamInfo]);
+    }, [overwrittenOptions, videoStreamInfo, showMediaStatsOverlay]);
 
     useEffect(() => {
       if (isPaused) {
